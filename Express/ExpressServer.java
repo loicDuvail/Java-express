@@ -136,4 +136,8 @@ public class ExpressServer {
     public void onInternalError(BiConsumer<Request, Response> internalErrorHandler){
         this.internalErrorHandler = internalErrorHandler;
     }
+
+    public void onInvalidRequest(BiConsumer<Request, Response> invalidRequestHandler){
+        this.invalidRequestHandler = invalidRequestHandler;
+    }
 }

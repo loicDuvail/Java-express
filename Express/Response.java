@@ -7,11 +7,7 @@ public class Response extends HttpMessage {
     private boolean sent = false;
     int status = 200;
     PrintWriter out;
-    public Response(String raw, String httpProtocol, String method, List<Header> headers, String body, int status, PrintWriter out) {
-        super(raw, httpProtocol, method, headers, body);
-        this.status = status;
-        this.out = out;
-    }
+
     public Response(PrintWriter out){
         this.out = out;
     }
