@@ -1,68 +1,19 @@
 package Express;
-import java.util.ArrayList;
+
+import java.io.PrintWriter;
 import java.util.List;
 
-public class Response {
-    private String body;
-    private List<Header> headers;
-    private List<Cookie> cookies;
-    private int status;
-
-    public Response(String body, List<Header> headers, int status) {
-        this.body = body;
-        this.headers = headers;
+public class Response extends HttpMessage {
+    private boolean sent = false;
+    int status = 200;
+    PrintWriter out;
+    public Response(String raw, String httpProtocol, String method, List<Header> headers, String body, int status, PrintWriter out) {
+        super(raw, httpProtocol, method, headers, body);
         this.status = status;
+        this.out = out;
     }
-
-    public Response(){
-        this.headers = new ArrayList<Header>();
-        this.cookies = new ArrayList<>();
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public List<Header> getHeaders() {
-        return headers;
-    }
-
-    public Header getHeader(String headerName) {
-        for (Header header : headers)
-            if (header.getName().equals(headerName))
-                return header;
-        return null;
-    }
-
-    public void setHeaders(List<Header> headers) {
-        this.headers = headers;
-    }
-
-    public void addHeader(Header header) {
-        headers.add(header);
-    }
-
-    public List<Cookie> getCookies() {
-        return cookies;
-    }
-
-    public Cookie getCookie(String name) {
-        for (Cookie cookie : cookies)
-            if (cookie.getName().equals(name))
-                return cookie;
-        return null;
-    }
-
-    public void setCookies(List<Cookie> cookies) {
-        this.cookies = cookies;
-    }
-
-    public void addCookie(Cookie cookie) {
-        this.cookies.add(cookie);
+    public Response(PrintWriter out){
+        this.out = out;
     }
 
     public int getStatus() {
@@ -74,12 +25,21 @@ public class Response {
     }
 
     @Override
-    public String toString() {
-        return "Response{" +
-                "body='" + body + '\'' +
-                ", headers=" + headers +
-                ", cookies=" + cookies +
-                ", status=" + status +
-                '}';
+    public void setBody(String body) {
+        this.body = body;
+        addHeader("Content-Length", Integer.toString(body.length()));
+    }
+
+    public void send(){
+        if(sent)return;
+        var msg = new StringBuilder();
+
+        msg.append(httpProtocol).append(" ").append(status).append(System.lineSeparator());
+        headers.forEach(msg::append);
+        msg.append(System.lineSeparator());
+        msg.append(body);
+
+        out.println(msg);
+        sent = true;
     }
 }

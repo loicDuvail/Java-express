@@ -1,19 +1,19 @@
 package Express;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-public class Header{
+public class Header {
     private String name;
-    private List<String> value;
-    public Header(String name, List<String> value){
+    private String value;
+
+    public Header(String name, String value) {
         this.name = name;
         this.value = value;
     }
-    public Header(String name, String value){
+
+    public Header(String name, String[] values) {
         this.name = name;
-        this.value = new ArrayList<>();
-        this.value.add(value);
+        setValue(values);
     }
 
     public String getName() {
@@ -24,27 +24,20 @@ public class Header{
         this.name = name;
     }
 
-    public List<String> getValue() {
+    public String getValue() {
         return value;
     }
 
-    public String getValueAsString(){
-        StringBuilder str = new StringBuilder();
-
-        for(int i = 0; i < value.size(); i++){
-            str.append(value.get(i));
-            if(i != value.size()-1)
-                str.append("; ");
-        }
-
-        return str.toString();
-    }
-
-    public void setValue(List<String> value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public void setValue(String value){
-        this.value.add(value);
+    public void setValue(String[] values){
+        this.value = Arrays.stream(values).reduce("", (acc, v)->(acc.isEmpty() ? acc : acc + "; ") + v);
+    }
+
+    @Override
+    public String toString() {
+        return (name + ": " + value + System.lineSeparator());
     }
 }
